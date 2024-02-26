@@ -13,3 +13,6 @@ This is a Telegram bot that allows you to add log to your daily log in Obsidian.
 ## Usage
 
 Message the bot and it will reply with ".", which means ok or error information.
+
+## TODO
+- [] Review today in history.

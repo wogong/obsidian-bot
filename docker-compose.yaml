@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  obbot:
+    build:
+      context: "."
+      dockerfile: Dockerfile
+      args:
+        - "UID=${UID:-1002}"
+        - "GID=${GID:-100}"
+        - "UNAME=${UNAME:-wogong}"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /home/wogong/Dropbox/Repos/obsidian:/data
+      - ./src/config-docker.py:/codebase/config.py
+    restart: always

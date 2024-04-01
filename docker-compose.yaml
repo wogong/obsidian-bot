@@ -13,5 +13,5 @@ services:
       - TZ=Asia/Shanghai
     volumes:
       - /home/wogong/Dropbox/Repos/obsidian:/data
-      - ./src/config-docker.py:/codebase/config.py
+      - ./src/.env.docker:/codebase/src/.env
     restart: always

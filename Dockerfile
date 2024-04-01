@@ -20,7 +20,7 @@ RUN apt-get update && \
 RUN mkdir -p /codebase
 ADD . /codebase
 WORKDIR /codebase
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt \
 
 ARG UID
 ARG GID
@@ -29,4 +29,4 @@ RUN groupadd -g ${GID} -o ${UNAME}
 RUN useradd -m -u ${UID} -g ${GID} -o -s /bin/bash ${UNAME}
 USER ${UNAME}
 
-ENTRYPOINT ["python3", "/codebase/src/obbot.py"]
+ENTRYPOINT ["python3", "/codebase/src/bot.py"]

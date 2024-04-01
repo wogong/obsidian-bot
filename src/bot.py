@@ -2,12 +2,15 @@ import os
 import logging
 from datetime import datetime
 
-from config import *
-
-from telegram import __version__ as TG_VER
-
 from telegram import ForceReply, Update
-from telegram.ext import Application, CommandHandler, CallbackContext, ContextTypes, ExtBot, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
+
+from dotenv import load_dotenv
+
+load_dotenv()
+PATH = os.getenv("OBPATH")
+BOT = os.getenv("BOT")
+CHAT_ID = os.getenv("CHAT_ID")
 
 # Enable logging
 logging.basicConfig(
@@ -47,9 +50,8 @@ async def ob(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             date = now.strftime('%Y-%m-%d')
             time = now.strftime('%H:%M')
             year = str(now.year)
-            week_num = 'W' + str(f"{now.isocalendar()[1]:02d}")
             content = '- ' + time + ' ' + message + '\n'
-            filename = os.path.join(PATH, 'journal', year, week_num, date + '.md')
+            filename = os.path.join(PATH, 'journal', year, date + '.md')
             if not os.path.exists(filename):
                 os.system(r"touch {}".format(filename))
             with open(filename, 'a+') as f:

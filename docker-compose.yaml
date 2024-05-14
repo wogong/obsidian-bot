@@ -12,6 +12,6 @@ services:
     environment:
       - TZ=Asia/Shanghai
     volumes:
-      - /home/wogong/Dropbox/Repos/obsidian:/data
+      - /home/wogong/Dropbox/Server/data/obsidian:/data
       - ./src/.env.docker:/codebase/src/.env
     restart: always

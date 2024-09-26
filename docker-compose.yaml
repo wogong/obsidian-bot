@@ -1,17 +1,16 @@
-version: "3"
-
 services:
   obbot:
     build:
       context: "."
       dockerfile: Dockerfile
       args:
-        - "UID=${UID:-1002}"
-        - "GID=${GID:-100}"
+        - "UID=${UID:-1000}"
+        - "GID=${GID:-1000}"
         - "UNAME=${UNAME:-wogong}"
+    container_name: obbot
     environment:
       - TZ=Asia/Shanghai
     volumes:
       - /home/wogong/Dropbox/Server/data/obsidian:/data
-      - ./src/.env.docker:/codebase/src/.env
+      - ./src/.env.docker:/app/src/.env
     restart: always

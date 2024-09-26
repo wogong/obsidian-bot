@@ -1,26 +1,10 @@
-FROM python:3.10-slim AS bot
+FROM python:3.12-slim-bookworm
 
-ENV PYTHONFAULTHANDLER=1
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONHASHSEED=random
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PIP_NO_CACHE_DIR=off
-ENV PIP_DISABLE_PIP_VERSION_CHECK=on
-ENV PIP_DEFAULT_TIMEOUT=100
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    python3 \
-    python3-pip \
-    python3-dev \
-    build-essential && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN mkdir -p /codebase
-ADD . /codebase
-WORKDIR /codebase
-RUN pip3 install --no-cache-dir -r requirements.txt \
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+ADD . /app
+WORKDIR /app
+RUN rm -rf /app/.venv
+RUN uv sync --frozen
 
 ARG UID
 ARG GID
@@ -29,4 +13,4 @@ RUN groupadd -g ${GID} -o ${UNAME}
 RUN useradd -m -u ${UID} -g ${GID} -o -s /bin/bash ${UNAME}
 USER ${UNAME}
 
-ENTRYPOINT ["python3", "/codebase/src/bot.py"]
+ENTRYPOINT ["uv", "run","src/bot.py"]

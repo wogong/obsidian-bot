@@ -2,6 +2,7 @@ import os
 import logging
 from datetime import datetime
 
+import httpx
 from telegram import ForceReply, Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
@@ -11,6 +12,8 @@ load_dotenv()
 PATH = os.getenv("OBPATH")
 BOT = os.getenv("BOT")
 CHAT_ID = os.getenv("CHAT_ID")
+UPTIME_URL = os.getenv("UPTIME_URL", "")
+INTERVAL = int(os.getenv("INTERVAL", "60"))
 
 # Enable logging
 logging.basicConfig(
@@ -64,6 +67,16 @@ async def ob(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text(response)
 
 
+async def heartbeat(context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send heartbeat to uptime-kuma push monitor."""
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.get(UPTIME_URL, timeout=10)
+        logger.debug("Heartbeat sent successfully")
+    except Exception as e:
+        logger.warning(f"Failed to send heartbeat: {e}")
+
+
 def main() -> None:
     """Start the bot."""
     # Create the Application and pass it your bot's token.
@@ -75,6 +88,11 @@ def main() -> None:
 
     # on non command i.e message - echo the message on Telegram
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, callback = ob))
+
+    # Schedule uptime-kuma heartbeat if configured
+    if UPTIME_URL:
+        application.job_queue.run_repeating(heartbeat, interval=INTERVAL, first=0)
+        logger.info(f"Uptime-kuma heartbeat scheduled every {INTERVAL} seconds")
 
     # Run the bot until the user presses Ctrl-C
     logger.info('Starting bot.')
